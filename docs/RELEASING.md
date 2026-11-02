@@ -38,6 +38,19 @@ workflow run. Do not manually delete/reuse a published version to recover.
 
 ## Repository settings
 
+Checks can also be run manually or by pushing to `codex/**`; validate there
+before promoting the same source to `release`. Named stages distinguish
+formatting, PostgreSQL integration, Clippy, release-policy and commit failures.
+For PRs, Conventional Commit validation uses the source base/head SHAs rather
+than GitHub's synthetic merge title. Actual invalid source messages still fail.
+
+Dependabot Cargo updates are lockfile-only: automatic updates stay within the
+manifest's compatible version requirements, including Cargo's 0.x rules. API and
+cryptographic migrations need an explicit manifest/code change and compatibility
+review. RustSec remains a required gate; this policy does not make incompatible
+security fixes safe to apply without the required migration. Existing failed
+historical runs remain visible and are not deleted to make the history look green.
+
 Use `release` as the default/publication branch. Actions must be enabled with
 GitHub-owned Actions and the pinned Sigstore installer allowed. The publish job
 requests Contents: write, Packages: write and OIDC id-token: write. Read-only

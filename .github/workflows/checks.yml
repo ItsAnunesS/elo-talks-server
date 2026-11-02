@@ -2,6 +2,9 @@ name: Checks
 
 on:
   pull_request:
+  push:
+    branches: ["codex/**"]
+  workflow_dispatch:
   workflow_call:
 
 permissions:
@@ -43,21 +46,33 @@ jobs:
             target
           key: server-checks-v1-${{ runner.os }}-${{ hashFiles('Cargo.lock', 'rust-toolchain.toml') }}
           restore-keys: server-checks-v1-${{ runner.os }}-
-      - name: Rust and PostgreSQL regressions
+      - name: Rust formatting
         run: |
           rustup show
           cargo fmt --all --check
-          cargo test --locked
-          cargo clippy --locked --all-targets -- -D warnings
-      - name: Panel, release policy and commit conventions
+      - name: PostgreSQL integration regressions
+        run: cargo test --locked
+      - name: Clippy
+        run: cargo clippy --locked --all-targets -- -D warnings
+      - name: Panel tooling and formatting
         run: |
           npm ci --ignore-scripts --no-audit --no-fund
           npm run format:check
           node --check admin/app.js
-          python3 -m unittest discover -s tests -p 'test_*.py' -v
-          python3 scripts/check-commit-messages.py
           bash -n scripts/package.sh
           git diff --check
+      - name: Python release-policy regressions
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -v
+      - name: Conventional Commits
+        env:
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if [[ -n "$PR_HEAD_SHA" ]]; then
+            python3 scripts/check-commit-messages.py --base "$PR_BASE_SHA" --head "$PR_HEAD_SHA"
+          else
+            python3 scripts/check-commit-messages.py
+          fi
       - name: RustSec advisory checks
         run: |
           cargo install cargo-audit --version 0.22.2 --locked

@@ -51,3 +51,9 @@ application logic in a generated commit. Keep Actions pinned by full SHA and
 publication privileges limited to the publish job. Preserve immutable releases,
 container versions, signed checksums and source-to-artifact identity. Never treat
 a successful push as a successful release; verify Actions and report both.
+
+Use a `codex/**` branch or manual Checks run to validate changes before promoting
+them to `release`. PR commit validation must use the PR source range, excluding
+GitHub's synthetic merge commit. Keep the release test's mocked publication
+notices out of real Actions annotations. Dependabot Cargo updates are lockfile-only;
+changing cryptographic API/version constraints requires an explicit migration.

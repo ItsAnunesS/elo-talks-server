@@ -3,6 +3,9 @@ updates:
   - package-ecosystem: cargo
     directory: /
     target-branch: release
+    # Cargo's existing semver ranges define compatible automatic updates.
+    # Cryptography/API migrations require an explicit manifest change and review.
+    versioning-strategy: lockfile-only
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
