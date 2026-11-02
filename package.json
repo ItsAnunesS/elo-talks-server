@@ -6,6 +6,6 @@
     "format:check": "prettier --check admin .github package.json package-lock.json .prettierrc.json release.json"
   },
   "devDependencies": {
-    "prettier": "3.6.2"
+    "prettier": "3.9.10"
   }
 }
