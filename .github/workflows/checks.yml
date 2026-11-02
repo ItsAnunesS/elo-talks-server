@@ -1,0 +1,64 @@
+name: Checks
+
+on:
+  pull_request:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: synthetic-ci-only-password
+          POSTGRES_DB: elo_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d elo_test"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+    env:
+      ELO_TEST_DATABASE_URL: postgresql://postgres:synthetic-ci-only-password@127.0.0.1:5432/elo_test
+      CARGO_INCREMENTAL: "0"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+          cache: npm
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: server-checks-v1-${{ runner.os }}-${{ hashFiles('Cargo.lock', 'rust-toolchain.toml') }}
+          restore-keys: server-checks-v1-${{ runner.os }}-
+      - name: Rust and PostgreSQL regressions
+        run: |
+          rustup show
+          cargo fmt --all --check
+          cargo test --locked
+          cargo clippy --locked --all-targets -- -D warnings
+      - name: Panel, release policy and commit conventions
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm run format:check
+          node --check admin/app.js
+          python3 -m unittest discover -s tests -p 'test_*.py' -v
+          python3 scripts/check-commit-messages.py
+          bash -n scripts/package.sh
+          git diff --check
+      - name: RustSec advisory checks
+        run: |
+          cargo install cargo-audit --version 0.22.2 --locked
+          cargo audit --deny warnings

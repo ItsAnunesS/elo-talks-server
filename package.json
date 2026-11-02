@@ -1,0 +1,11 @@
+{
+  "name": "elo-talks-server-tools",
+  "private": true,
+  "scripts": {
+    "format": "prettier --write admin .github package.json package-lock.json .prettierrc.json release.json",
+    "format:check": "prettier --check admin .github package.json package-lock.json .prettierrc.json release.json"
+  },
+  "devDependencies": {
+    "prettier": "3.6.2"
+  }
+}

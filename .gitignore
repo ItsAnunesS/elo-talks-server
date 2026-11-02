@@ -1,0 +1,11 @@
+/target/
+/data/
+/secrets/
+*.tmp
+
+/tls/
+.env
+/artifacts/
+/node_modules/
+__pycache__/
+/release-notes.md

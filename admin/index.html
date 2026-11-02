@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Elo Talks · Server</title>
+    <link rel="stylesheet" href="/panel/style.css" />
+    <script type="module" src="/panel/app.js"></script>
+  </head>
+  <body>
+    <main id="login-view">
+      <section class="login-card">
+        <span class="eyebrow">ELO TALKS / SERVER</span>
+        <h1>A shared space.<br />A clear boundary.</h1>
+        <p>Sign in to manage your organizations and workspace access.</p>
+        <form id="login-form">
+          <label
+            >Username<input
+              name="username"
+              autocomplete="username"
+              required
+              maxlength="64" /></label
+          ><label
+            >Password<input
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              required
+              maxlength="1024" /></label
+          ><button class="primary">Sign in</button>
+          <p id="login-error" role="alert"></p>
+        </form>
+        <a href="/docs/">API documentation ↗</a>
+      </section>
+    </main>
+    <div id="app-view" hidden>
+      <aside>
+        <div class="brand">elo<span>talks</span><small>SERVER</small></div>
+        <div id="identity"></div>
+        <nav>
+          <button data-view="overview" class="active">Overview</button
+          ><button data-view="organizations">Organizations</button
+          ><button data-view="users">Users</button><button data-view="workspaces">Workspaces</button
+          ><button data-view="members">Members & roles</button
+          ><button data-view="access">Workspace access</button
+          ><button data-view="sessions">My sessions</button>
+        </nav>
+        <footer>
+          <a href="/docs/">API documentation ↗</a><button id="logout">Sign out</button>
+        </footer>
+      </aside>
+      <section class="main">
+        <header>
+          <div>
+            <span class="eyebrow">ADMINISTRATION</span>
+            <h1 id="page-title">Overview</h1>
+          </div>
+          <div class="organization-picker">
+            <label for="organization">Organization</label
+            ><select id="organization"></select>
+          </div>
+        </header>
+        <p id="notice" role="status" aria-live="polite"></p>
+        <div id="content"></div>
+      </section>
+    </div>
+    <dialog id="dialog" aria-labelledby="dialog-title">
+      <form id="editor">
+        <header>
+          <h2 id="dialog-title"></h2>
+          <button type="button" id="close-dialog" aria-label="Close">×</button>
+        </header>
+        <div id="fields"></div>
+        <p id="dialog-error" role="alert"></p>
+        <footer>
+          <button type="button" id="cancel-dialog">Cancel</button
+          ><button class="primary" id="save-dialog">Save changes</button>
+        </footer>
+      </form>
+    </dialog>
+  </body>
+</html>

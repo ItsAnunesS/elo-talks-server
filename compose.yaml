@@ -1,0 +1,46 @@
+services:
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    secrets:
+      - postgres_password
+    ports:
+      - "127.0.0.1:15432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+  api:
+    build: .
+    user: "${ELO_UID:-1000}:${ELO_GID:-1000}"
+    network_mode: host
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    command: ["--database-url-file", "/run/secrets/database_url", "serve", "--unlock-password-file", "/run/secrets/unlock"]
+    volumes:
+      - ./data:/data
+      - ./tls:/tls:ro
+    secrets:
+      - database_url
+      - unlock
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+secrets:
+  postgres_password:
+    file: ./secrets/postgres_password
+  database_url:
+    file: ./secrets/database_url
+  unlock:
+    file: ./secrets/unlock
+volumes:
+  postgres_data:

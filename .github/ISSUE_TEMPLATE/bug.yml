@@ -1,0 +1,31 @@
+name: Bug report
+description: Report reproducible service, API or administration panel behavior.
+body:
+  - type: markdown
+    attributes:
+      value: "For security vulnerabilities, follow SECURITY.md. Never include passwords, tokens, database URLs, private keys, decrypted data or real account content."
+  - type: input
+    id: version
+    attributes:
+      label: Server version and environment
+      description: Include the release version, OS, PostgreSQL version and Docker/native installation.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Use synthetic users and describe relevant roles/grants.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Sanitized diagnostics
+      description: Remove identifiers, secrets and private addresses before submitting.

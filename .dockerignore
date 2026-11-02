@@ -1,0 +1,15 @@
+.git
+/target
+/data
+/secrets
+/tests
+/docs
+*.tmp
+
+/tls/
+.env
+/artifacts
+/node_modules
+__pycache__
+/.github
+/scripts

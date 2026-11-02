@@ -1,0 +1,17 @@
+name: Feature request
+description: Propose a focused improvement to the service or panel.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: Explain the use case and affected roles without including real user data.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Include API, permission, performance or migration implications where relevant.
+    validations:
+      required: true
