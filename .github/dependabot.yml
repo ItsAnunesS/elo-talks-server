@@ -6,6 +6,21 @@ updates:
     # Cargo's existing semver ranges define compatible automatic updates.
     # Cryptography/API migrations require an explicit manifest change and review.
     versioning-strategy: lockfile-only
+    # Dependabot classifies breaking 0.x updates as minor. Explicit guards also
+    # prevent grouped lockfile-only updates from selecting an incompatible API.
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: aes-gcm
+        update-types: ["version-update:semver-minor"]
+      - dependency-name: argon2
+        update-types: ["version-update:semver-minor"]
+      - dependency-name: rand
+        update-types: ["version-update:semver-minor"]
+      - dependency-name: sha2
+        update-types: ["version-update:semver-minor"]
+      - dependency-name: tower-http
+        update-types: ["version-update:semver-minor"]
     schedule:
       interval: weekly
     open-pull-requests-limit: 5

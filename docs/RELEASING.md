@@ -45,7 +45,11 @@ For PRs, Conventional Commit validation uses the source base/head SHAs rather
 than GitHub's synthetic merge title. Actual invalid source messages still fail.
 
 Dependabot Cargo updates are lockfile-only: automatic updates stay within the
-manifest's compatible version requirements, including Cargo's 0.x rules. API and
+manifest's compatible version requirements. Explicit ignore rules exclude major
+API updates and breaking minor updates to the 0.x crypto/network dependencies:
+Dependabot calls these minor updates, and a grouped lockfile-only update was
+observed to generate an inconsistent direct dependency reference. Patch updates
+remain enabled. API and
 cryptographic migrations need an explicit manifest/code change and compatibility
 review. RustSec remains a required gate; this policy does not make incompatible
 security fixes safe to apply without the required migration. Existing failed

@@ -56,4 +56,6 @@ Use a `codex/**` branch or manual Checks run to validate changes before promotin
 them to `release`. PR commit validation must use the PR source range, excluding
 GitHub's synthetic merge commit. Keep the release test's mocked publication
 notices out of real Actions annotations. Dependabot Cargo updates are lockfile-only;
-changing cryptographic API/version constraints requires an explicit migration.
+keep the major/0.x-minor ignore guards, since grouped lockfile-only updates have
+produced inconsistent lockfiles. Changing cryptographic API/version constraints
+requires an explicit migration.
