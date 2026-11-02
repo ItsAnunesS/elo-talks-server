@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Validate all commits reachable from HEAD against Conventional Commits."""
+"""Validate source commits, optionally restricted to a pull request's range."""
+import argparse
 import re
 import subprocess
 
@@ -10,9 +11,20 @@ CONVENTIONAL_SUBJECT = re.compile(
 
 
 def main():
-    history = subprocess.check_output(
-        ["git", "log", "--format=%h%x09%s", "HEAD"], text=True
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--base", type=commit_sha)
+    parser.add_argument("--head", type=commit_sha)
+    args = parser.parse_args()
+    head = args.head or "HEAD"
+    selection = f"{args.base}..{head}" if args.base else head
+    result = subprocess.run(
+        ["git", "log", "--format=%h%x09%s", selection, "--"],
+        capture_output=True,
+        text=True,
     )
+    if result.returncode:
+        raise SystemExit("Could not read the requested source commit history")
+    history = result.stdout
     invalid = [
         entry
         for entry in history.splitlines()
@@ -20,7 +32,13 @@ def main():
     ]
     if invalid:
         raise SystemExit("Invalid Conventional Commit subjects:\n" + "\n".join(invalid))
-    print("PASS: all commit subjects follow Conventional Commits")
+    print("PASS: source commit subjects follow Conventional Commits")
+
+
+def commit_sha(value):
+    if not re.fullmatch(r"(?:[0-9a-f]{40}|[0-9a-f]{64})", value):
+        raise argparse.ArgumentTypeError("Expected a full Git commit SHA")
+    return value
 
 
 if __name__ == "__main__":

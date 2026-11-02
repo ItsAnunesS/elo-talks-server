@@ -2,6 +2,7 @@
 
 import contextlib
 import importlib.util
+import io
 import json
 import os
 import pathlib
@@ -33,6 +34,8 @@ def git(root, *args):
 
 class ReleaseTests(unittest.TestCase):
     def setUp(self):
+        # Synthetic publication notices must not become real Actions annotations.
+        self.enterContext(contextlib.redirect_stdout(io.StringIO()))
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = pathlib.Path(self.temp.name) / "source"
